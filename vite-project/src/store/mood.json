@@ -1,0 +1,17 @@
+{
+  "Drama": ["Emotional", "Reflective", "Thoughtful"],
+  "Comedy": ["Happy", "Playful", "Relaxed"],
+  "Romance": ["Affectionate", "Hopeful", "Warm"],
+  "Horror": ["Fearful", "Tense", "Adrenalized"],
+  "Action": ["Excited", "Energetic", "Bold"],
+  "Thriller": ["Suspenseful", "Anxious", "Alert"],
+  "Fantasy": ["Imaginative", "Curious", "Dreamy"],
+  "Science Fiction": ["Curious", "Awe-inspired", "Thought-Provoking"],
+  "Mystery": ["Intrigued", "Focused", "Analytical"],
+  "Western": ["Adventurous", "Nostalgic", "Rugged"],
+  "Animation": ["Joyful", "Lighthearted", "Whimsical"],
+  "Musical": ["Uplifted", "Cheerful", "Inspired"],
+  "Supernatural": ["Uneasy", "Curious", "Spooked"],
+  "Historical": ["Reflective", "Inspired", "Respectful"],
+  "Documentary": ["Informed", "Thoughtful", "Aware"]
+}
