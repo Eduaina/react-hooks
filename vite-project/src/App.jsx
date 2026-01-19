@@ -1,130 +1,148 @@
-import React, { useReducer, useEffect, useCallback } from "react"
-import SelectField from "./components/Select.jsx"
-import listofMoodOption from "./store/mood.json"
-import listofGenreOption from "./store/genre.json"
-import "./App.css"
+import React, { useReducer, useCallback, useEffect } from "react";
+import SelectField from "./components/Select";
+import moods from "./store/mood.json";
+import genres from "./store/genre.json";
+import "./App.css";
 
-const reducer = (state, action) => {
-
-  switch(action.type) {
-    case "Set_Genre":
-      return { ...state, genre: action.payload, mood: "" }
-  
-    case "Set_Mood":
-      return { ...state, mood: action.payload, }
-    
-    case "Set_Level":
-      return { ...state, level: action.payload, }
-    
-    case "Set_aiResponses":
-      return { ...state, aiResponses: action.payload || []}
-      default:
-      return state;
-  }
+const initialState = {
+  genre: "",
+  mood: "",
+  level: "",
+  responses: [],
+  loading: false,
+  error: null,
 };
 
+function reducer(state, action) {
+  switch (action.type) {
+    case "SET_GENRE":
+      return { ...state, genre: action.payload, mood: "" };
+
+    case "SET_MOOD":
+      return { ...state, mood: action.payload };
+
+    case "SET_LEVEL":
+      return { ...state, level: action.payload };
+
+    case "FETCH_START":
+      return { ...state, loading: true, error: null, responses: [] };
+
+    case "FETCH_SUCCESS":
+      return { ...state, loading: false, responses: action.payload };
+
+    case "FETCH_ERROR":
+      return { ...state, loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+}
+
 export default function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { genre, mood, level, responses, loading, error } = state;
 
-  const [state, dispatch] = useReducer(reducer, {
+  const availableMoods = moods[genre] || [];
 
-    genre: "",
-    mood: "",
-    level: "",
-    aiResponses: [] 
+  const fetchRecommendations = useCallback(async () => {
+    if (!genre || !mood || !level) {
+      dispatch({
+        type: "FETCH_ERROR",
+        payload: "Please select Genre, Mood, and Level.",
+      });
+      return;
     }
-   )
 
-   const availableMoodBasedOnGenre =
-    listofMoodOption[state.genre] || []
-
-   const fetchRecommendations = useCallback(async() => {
-
-    const { genre, mood, level } = state;
-
-    if (!genre || !mood || !level) return;
+    dispatch({ type: "FETCH_START" });
 
     try {
-    const GEMINI_API_KEY = 'AIzaSyCENSfDNcHbxUQYAupRtOibe-TWMcK0xDA';
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: `Recommend 5 ${genre} books for a ${level} reader who is feeling ${mood}. Give brief explanations.`,
+                  },
+                ],
+              },
+            ],
+          }),
+        }
+      );
 
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent",
-  {
-    method: "POST",
-    headers: { 
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${GEMINI_API_KEY}` 
-    },
-    body: JSON.stringify({
-      prompt: {
-        text: `Recommend 5 options for a ${level} ${genre} reader feeling ${mood}. Explain why.`
-      },
-      temperature: 0.7,
-      candidate_count: 6
-    })
-  }
-);
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText);
+      }
 
-   const data = await response.json()
+      const data = await res.json();
 
-    dispatch({
-      type: "Set_aiResponses",
-      payload: data?.candidates || []
-    })
-   } catch (err) {
-      console.log(err);
+      dispatch({
+        type: "FETCH_SUCCESS",
+        payload: data?.candidates || [],
+      });
+    } catch (err) {
+      console.error(err);
+      dispatch({
+        type: "FETCH_ERROR",
+        payload: "Failed to fetch recommendations. Check API key or quota.",
+      });
     }
-  }, [state])
-  
-  useEffect(() => {
-     fetchRecommendations()
-  }, [fetchRecommendations])
-  
-  return(
-       <section>
-        <h1>Select Categories</h1>
-       <SelectField
+  }, [genre, mood, level]);
+
+  return (
+    <section>
+      <h1>Book Recommendation Engine</h1>
+
+      <SelectField
         placeholder="Genre"
-        id="genre"
-        options={listofGenreOption}
-        value={state.genre}
-        onSelect={(value) =>
-        dispatch ({type: "Set_Genre" , payload: value})
-          }
+        options={genres}
+        value={genre}
+        onSelect={(val) => dispatch({ type: "SET_GENRE", payload: val })}
       />
-        
-       <SelectField
+
+      <SelectField
         placeholder="Mood"
-        id="mood"
-        options={availableMoodBasedOnGenre}
-        value={state.mood}
-         onSelect={(value) =>
-        dispatch ({type: "Set_Mood" , payload: value})
-         }
-        />
+        options={availableMoods}
+        value={mood}
+        onSelect={(val) => dispatch({ type: "SET_MOOD", payload: val })}
+      />
 
-        <SelectField
+      <SelectField
         placeholder="Level"
-        id="level"
         options={["Beginner", "Intermediate", "Expert"]}
-        value={state.level}
-        onSelect={(value) =>
-        dispatch ({type: "Set_Level" , payload: value})
-         }
-        />
+        value={level}
+        onSelect={(val) => dispatch({ type: "SET_LEVEL", payload: val })}
+      />
 
       <br />
-         
-        <button onClick={fetchRecommendations}>See Recommendation</button>
+
+      <button onClick={fetchRecommendations} disabled={loading}>
+        {loading ? "Thinking..." : "See Recommendations"}
+      </button>
 
       <br />
       <br />
-    
-     {state.aiResponses.map((recommend, index) => (
+
+      {error && <p className="error">{error}</p>}
+
+      {responses.map((item, index) => (
         <details key={index}>
           <summary>Recommendation {index + 1}</summary>
-          <p>{recommend?.content?.[0]?.text}</p>
+          <p>
+            {item?.content?.parts
+              ?.map((part) => part.text)
+              .join(" ")}
+          </p>
         </details>
       ))}
-      </section>
-     )
-      };
+    </section>
+  );
+}

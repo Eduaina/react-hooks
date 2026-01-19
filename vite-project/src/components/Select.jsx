@@ -1,15 +1,14 @@
-export default function SelectField(props) {
-  const { placeholder, id, options, value, onSelect } = props
-
-  return (<section className="select-wrapper" role="dropdown">
-    <select defaultValue={value} onChange={(e) => onSelect(e.target.value)} list={id} id={id}>
-      <option value=""> {placeholder}</option>
-      {
-        options.map((val) => <option key={val} 
-        >
-        {val}
-        </option>)
-      }
-    </select>
-  </section>)
+export default function SelectField({ placeholder, options, value, onSelect }) {
+  return (
+    <section className="select-wrapper">
+      <select value={value} onChange={(e) => onSelect(e.target.value)}>
+        <option value="">{placeholder}</option>
+        {options.map((opt) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+    </section>
+  );
 }
