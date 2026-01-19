@@ -5,38 +5,87 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f0f8ff;
+  color: #333;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+section {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+h1 {
+  text-align: center;
+  color: #4da6ff;
+  margin-bottom: 25px;
+  font-size: 2rem;
+  text-shadow: 1px 1px 2px rgba(255, 182, 193, 0.4);
 }
 
-.card {
-  padding: 2em;
+.select-wrapper {
+  margin-bottom: 20px;
 }
 
-.read-the-docs {
-  color: #888;
+select {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #cce0ff;
+  background: #e6f0ff; 
+  color: #333;
+  transition: 0.3s all;
+}
+
+select:focus {
+  outline: none;
+  border-color: #ffb6c1;
+  box-shadow: 0 0 8px rgba(255, 182, 193, 0.3);
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  font-size: 1rem;
+  color: #fff;
+  background: linear-gradient(135deg, #4da6ff, #ffb6c1);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: 0.3s all;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+details {
+  margin-top: 20px;
+  padding: 12px;
+  border-left: 4px solid #4da6ff;
+  border-radius: 6px;
+  background: #f7faff;
+}
+
+summary {
+  font-weight: bold;
+  cursor: pointer;
+  color: #ff69b4; 
+}
+
+p {
+  margin: 10px 0 0 0;
+  line-height: 1.5;
+  color: #555;
 }

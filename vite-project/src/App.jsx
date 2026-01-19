@@ -99,7 +99,7 @@ export default function App() {
 
   return (
     <section>
-      <h1>Book Recommendation Engine</h1>
+      <h1>Recommendation Generator</h1>
 
       <SelectField
         placeholder="Genre"
