@@ -1,4 +1,4 @@
-import React, { useReducer, useCallback, useEffect } from "react";
+import React, { useReducer, useCallback } from "react";
 import SelectField from "./components/Select";
 import moods from "./store/mood.json";
 import genres from "./store/genre.json";
@@ -53,11 +53,20 @@ export default function App() {
       return;
     }
 
+    const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+    if (!GEMINI_API_KEY) {
+      dispatch({
+        type: "FETCH_ERROR",
+        payload: "API key is missing. Please set VITE_GEMINI_API_KEY.",
+      });
+      return;
+    }
+
     dispatch({ type: "FETCH_START" });
 
     try {
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
           method: "POST",
           headers: {
